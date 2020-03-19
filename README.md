@@ -84,4 +84,26 @@ entfrm-boot
 7. 启动entfrm-ui
 
 ### 演示效果
+<table>
+    <tr>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/login.png"/></td>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/home.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/dept.png"/></td>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/role.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/user.png"/></td>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/menu.png"/></td>
+    </tr>
+	<tr>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/dict.png"/></td>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/oauth.png"/></td>
+    </tr>	 
+    <tr>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/loginLog.png"/></td>
+        <td><img src="https://gitee.com/entfrm/entfrm-boot/blob/master/doc/operLog.png"/></td>
+    </tr>
+</table>
 
