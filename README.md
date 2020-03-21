@@ -2,7 +2,7 @@
 
 ### 平台简介    
 entfrm快速开发平台，是一个Web可视化开发平台，是一个集PC和APP快速开发、系统管理、运维监控、开发工具、OAuth2授权、可视化数据源管理与数据构建、API动态生成与统计、工作流、智能表单设计、微服务骨架等全方位功能于一体的高效、稳定的快速开发平台。
-平台采用Spring Boot 2.X 、Spring Security、Oauth2、Mybatis Plus、 Flutter等核心技术，前端基于vue-element-admin框架。 演示地址：http://47.100.3.58/  **满 500 star更新已完成的所有功能**
+平台采用Spring Boot 2.X 、Spring Security、Oauth2、Mybatis Plus、Activiti7、Flutter等核心技术，前端基于vue-element-admin框架。 演示地址：http://47.100.3.58/  **满 500 star更新已完成的所有功能**
 #### 参考项目：pig、ruoyi
 ###  entfrm官方交流群：871910881 (进群领取前端UI)
 ### 软件功能
@@ -44,19 +44,22 @@ entfrm快速开发平台，是一个Web可视化开发平台，是一个集PC和
 
  - [x] 操作日志：系统登录日志记录查询包含登录异常。
 #### 3.开发工具
- - [ ] 数据源管理：Mysql、SQL Server、PostgreSQL等主流数据库在线管理、表管理（新建、修改、删除、查询）、代码生成√。
+ - [ ] 数据管理：Mysql、SQL Server、PostgreSQL等主流数据库在线管理√、数据表管理（新建、修改、删除、查询）、代码生成√、数据源管理。
 
  - [ ] API管理：基于数据源动态生成restful api，支持管理、发布、权限控制、api统计。
 
  - [ ] 智能表单：基于数据源动态生成表单，多终端支持。
 
- - [ ] 工作流：功能包括在线办公、我的任务、审批测试、流程管理、模型管理。
+ - [x] Activiti7工作流：功能包括在线办公、我的任务、审批测试、流程管理、模型管理。
 ### 代码结构
 ~~~
 entfrm-boot
 |--entfrm-auth Oauth2授权模块
 |--entfrm-biz 
+|----entfrm-biz-activiti 工作流模块
+|----entfrm-biz-devtool 开发工具模块
 |----entfrm-biz-monitor 运维监控模块
+|----entfrm-biz-quartz 定时任务模块
 |----entfrm-biz-system 系统管理模块
 |--entfrm-core 
 |----entfrm-core-base 基础核心模块
@@ -104,6 +107,10 @@ entfrm-boot
     <tr>
         <td><img src="http://47.100.3.58/static/img/loginLog.png"/></td>
         <td><img src="http://47.100.3.58/static/img/operLog.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="http://47.100.3.58/static/img/datasource.png"/></td>
+        <td><img src="http://47.100.3.58/static/img/job.png"/></td>
     </tr>
 </table>
 
