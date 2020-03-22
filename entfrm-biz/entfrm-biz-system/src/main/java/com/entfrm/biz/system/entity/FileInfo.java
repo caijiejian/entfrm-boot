@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,15 +31,6 @@ public class FileInfo implements Serializable {
 
     /** 文件名称 */
     private String name;
-
-    /** 类别 */
-    private String category;
-
-    /** 表名 */
-    private String baseName;
-
-    /** 对象编号 */
-    private String objId;
 
     /** 文件类型 */
     private String type;
@@ -72,6 +64,14 @@ public class FileInfo implements Serializable {
     /** 备注 */
     protected String remarks;
 
+    /** 开始时间 */
     @TableField(exist = false)
-    private String pkField;
+    @JsonIgnore
+    private String beginTime;
+
+    /** 结束时间 */
+    @TableField(exist = false)
+    @JsonIgnore
+    private String endTime;
+
 }

@@ -15,37 +15,38 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
  * @author entfrm
- * @date 2019/10/8
+ * @date 2018/10/8
  */
 @Slf4j
 @Component
 @AllArgsConstructor
 public class EntfrmAuthenticationFailureEvenHandler extends AbstractAuthenticationFailureEvenHandler {
 
-	private final TaskExecutor taskExecutor;
-	private final JdbcTemplate jdbcTemplate;
-	/**
-	 * 处理登录失败方法
-	 * <p>
-	 *
-	 * @param authenticationException 登录的authentication 对象
-	 * @param authentication          登录的authenticationException 对象
-	 * @param request                 请求
-	 * @param response                响应
-	 */
-	@Override
-	public void handle(AuthenticationException authenticationException, Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
-		log.info("用户：{} 登录失败，异常：{}", authentication.getPrincipal(), authenticationException.getLocalizedMessage());
+    private final TaskExecutor taskExecutor;
+    private final JdbcTemplate jdbcTemplate;
 
-		HttpServletRequest httpServletRequest = LoginLogUtil.getRequest();
+    /**
+     * 处理登录失败方法
+     * <p>
+     *
+     * @param authenticationException 登录的authentication 对象
+     * @param authentication          登录的authenticationException 对象
+     * @param request                 请求
+     * @param response                响应
+     */
+    @Override
+    public void handle(AuthenticationException authenticationException, Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+        log.info("用户：{} 登录失败，异常：{}", authentication.getPrincipal(), authenticationException.getLocalizedMessage());
 
-		PreparedStatementSetter pss = LoginLogUtil.setLoginLog(httpServletRequest, authentication.getPrincipal().toString(),"登录失败，异常：" + authenticationException.getLocalizedMessage());
+        PreparedStatementSetter pss = LoginLogUtil.setLoginLog(request, "0", authentication.getPrincipal().toString(),"登录失败，异常：" + authenticationException.getLocalizedMessage());
 
-		CompletableFuture.runAsync(() -> {
-			jdbcTemplate.update(SqlConstants.LOGIN_LOG, pss);
-		}, taskExecutor);
-	}
+        CompletableFuture.runAsync(() -> {
+            log.info("执行结果：" + jdbcTemplate.update(SqlConstants.LOGIN_LOG, pss));
+        }, taskExecutor);
+
+    }
 }

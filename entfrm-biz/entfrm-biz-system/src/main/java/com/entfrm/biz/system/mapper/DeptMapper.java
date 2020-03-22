@@ -22,4 +22,13 @@ public interface DeptMapper extends BaseMapper<Dept> {
      */
     public Dept selectDeptById(Integer deptId);
 
+    /**
+     * 根据角色ID查询部门
+     *
+     * @param roleId 角色ID
+     * @return 部门列表
+     */
+    public List<String> selectRoleDeptTree(Integer roleId);
+
+    public List<String> selectAreaDeptTree(Integer areaId);
 }

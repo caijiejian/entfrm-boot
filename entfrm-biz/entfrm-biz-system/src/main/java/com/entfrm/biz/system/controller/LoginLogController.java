@@ -7,10 +7,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.biz.system.entity.LoginLog;
 import com.entfrm.biz.system.service.LoginLogService;
 import com.entfrm.core.base.api.R;
+import com.entfrm.core.base.util.AddressUtil;
 import com.entfrm.core.log.annotation.OperLog;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 系统登录记录
@@ -48,5 +51,20 @@ public class LoginLogController {
         } catch (Exception e) {
             return R.error(e.getMessage());
         }
+    }
+
+    @OperLog("登录日志删除")
+    @PreAuthorize("@ps.hasPerm('loginLog_del')")
+    @DeleteMapping("/clean/{id}")
+    @ResponseBody
+    public R clean(@PathVariable String id) {
+        List<LoginLog> loginLogList = loginLogService.list();
+        for(LoginLog loginLog : loginLogList){
+            if("XX XX".equals(loginLog.getLoginAddr())){
+                loginLog.setLoginAddr(AddressUtil.getCityInfo(loginLog.getLoginIp()));
+                loginLogService.updateById(loginLog);
+            }
+        }
+        return R.ok();
     }
 }

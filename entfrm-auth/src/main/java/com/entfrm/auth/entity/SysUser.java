@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * @author yong
- * @date 2020/2/10
+ * @date 2020/3/10
  * @description 用户信息
  */
 @Data

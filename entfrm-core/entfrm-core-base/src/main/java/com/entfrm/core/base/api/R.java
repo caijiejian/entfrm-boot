@@ -1,6 +1,6 @@
 package com.entfrm.core.base.api;
 
-import com.entfrm.core.base.util.MessageUtil;
+import com.entfrm.core.base.config.GlobalConfig;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -49,15 +49,15 @@ public class R<T> implements Serializable {
     private T data;
 
     public static <T> R<T> ok() {
-        return restResult(null, SUCCESS, MessageUtil.getText("success"));
+        return restResult(null, SUCCESS, GlobalConfig.getText("success"));
     }
 
     public static <T> R<T> ok(String code, String... params) {
-        return restResult(null, SUCCESS, MessageUtil.getText(code, params));
+        return restResult(null, SUCCESS, GlobalConfig.getText(code, params));
     }
 
     public static <T> R<T> ok(T data) {
-        return restResult(data, SUCCESS, MessageUtil.getText("success"));
+        return restResult(data, SUCCESS, GlobalConfig.getText("success"));
     }
 
     public static <T> R<T> ok(T data, String msg) {
@@ -69,11 +69,11 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<T> error() {
-        return restResult(null, FAIL, MessageUtil.getText("fail"));
+        return restResult(null, FAIL, GlobalConfig.getText("fail"));
     }
 
     public static <T> R<T> error(String code, String... params) {
-        return restResult(null, FAIL, MessageUtil.getText(code, params));
+        return restResult(null, FAIL, GlobalConfig.getText(code, params));
     }
 
     public static <T> R<T> error(String msg) {

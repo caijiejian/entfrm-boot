@@ -29,4 +29,9 @@ public interface CommonConstants {
 	 * 角色前缀
 	 */
 	String ROLE = "ROLE_";
+
+	/**
+	 * 资源映射路径 前缀
+	 */
+	String RESOURCE_PREFIX = "/profile";
 }

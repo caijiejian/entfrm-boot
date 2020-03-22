@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author yong
- * @date 2020/2/10
+ * @date 2020/3/10
  * @description 用户详情实现
  */
 @Configuration

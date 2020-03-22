@@ -5,6 +5,7 @@ import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.entfrm.core.base.constant.SqlConstants;
+import com.entfrm.core.base.util.AddressUtil;
 import com.entfrm.core.base.util.DateUtil;
 import com.entfrm.core.base.util.SpringContextUtil;
 import com.entfrm.core.base.util.StrUtil;
@@ -35,7 +36,7 @@ public class OperLogUtil {
     public PreparedStatementSetter setOperLog(String title, long time, String userName, String clientId, String errorMsg) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects
                 .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-
+        String ip = ServletUtil.getClientIP(request);
         return new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, "1");
@@ -45,8 +46,8 @@ public class OperLogUtil {
                 ps.setString(5, userName);
                 ps.setString(6, clientId);
                 ps.setString(7, URLUtil.getPath(request.getRequestURI()));
-                ps.setString(8, ServletUtil.getClientIP(request));
-                ps.setString(9, "XX XX");//oper_addr 操作地址
+                ps.setString(8, ip);
+                ps.setString(9, AddressUtil.getCityInfo(ip));
                 ps.setString(10, HttpUtil.toParams(request.getParameterMap()));
                 if (StrUtil.isNotBlank(errorMsg)) {
                     ps.setString(11, "1");

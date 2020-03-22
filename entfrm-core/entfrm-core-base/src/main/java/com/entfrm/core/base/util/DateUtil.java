@@ -1,6 +1,8 @@
 package com.entfrm.core.base.util;
 
 import java.lang.management.ManagementFactory;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -22,4 +24,17 @@ public class DateUtil extends cn.hutool.core.date.DateUtil {
         return format(new Date(dateTime), pattern);
     }
 
+    /**
+     * 日期型字符串转化为日期 格式
+     */
+    public static Date parseDate(Object str) {
+        if (str == null) {
+            return null;
+        }
+        return parse(str.toString());
+    }
+
+    public static final String parseDateToStr(final String format, final Date date) {
+        return new SimpleDateFormat(format).format(date);
+    }
 }

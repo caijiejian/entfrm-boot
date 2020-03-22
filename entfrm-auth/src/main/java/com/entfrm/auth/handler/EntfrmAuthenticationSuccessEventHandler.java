@@ -1,5 +1,6 @@
 package com.entfrm.auth.handler;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import com.entfrm.auth.util.LoginLogUtil;
 import com.entfrm.core.base.constant.SecurityConstants;
@@ -17,10 +18,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
  * @author entfmr
- * @date 2019/10/8
+ * @date 2018/10/8
  */
 @Slf4j
 @Component
@@ -42,15 +44,24 @@ public class EntfrmAuthenticationSuccessEventHandler extends AbstractAuthenticat
 	@Override
 	public void handle(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
 		EntfrmUser entfrmUser = (EntfrmUser) authentication.getPrincipal();
-		log.info("用户：{} 登录成功", entfrmUser);
 
-		HttpServletRequest httpServletRequest = LoginLogUtil.getRequest();
+		String url = URLUtil.getPath(request.getRequestURI());
 
-		if(SecurityConstants.AUTH_TOKEN.equals(URLUtil.getPath(request.getRequestURI()))){
-			PreparedStatementSetter pss = LoginLogUtil.setLoginLog(httpServletRequest, entfrmUser.getUsername(), "");
+		log.info("用户：{} 授权成功，url：{}", entfrmUser, url);
+
+		String loginType = "0"; // 0 登录 1退出
+		if (StrUtil.containsAny(url, SecurityConstants.AUTH_TOKEN, SecurityConstants.TOKEN_LOGOUT)) {
+
+			if(SecurityConstants.TOKEN_LOGOUT.equals(url)){
+				loginType = "1";
+			}
+
+			PreparedStatementSetter pss = LoginLogUtil.setLoginLog(request, loginType, entfrmUser.getUsername(), "");
+
 			CompletableFuture.runAsync(() -> {
-				jdbcTemplate.update(SqlConstants.LOGIN_LOG, pss);
+				log.info("执行结果：" + jdbcTemplate.update(SqlConstants.LOGIN_LOG, pss));
 			}, taskExecutor);
+
 		}
 	}
 }

@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
  * @author yong
- * @date 2020/2/10
+ * @date 2020/3/10
  * @description TokenStore
  */
 @Configuration

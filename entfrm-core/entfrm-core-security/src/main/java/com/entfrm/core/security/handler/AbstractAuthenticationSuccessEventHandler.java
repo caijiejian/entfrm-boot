@@ -25,6 +25,7 @@ public abstract class AbstractAuthenticationSuccessEventHandler implements Appli
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes)
 				RequestContextHolder.getRequestAttributes();
+
 		HttpServletRequest request = requestAttributes.getRequest();
 		HttpServletResponse response = requestAttributes.getResponse();
 

@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 /**
  * @author entfrm
- * @date 2019/7/8
+ * @date 2018/7/8
  * 自定义OAuth2Exception
  */
 @JsonSerialize(using = EntfrmAuth2ExceptionSerializer.class)

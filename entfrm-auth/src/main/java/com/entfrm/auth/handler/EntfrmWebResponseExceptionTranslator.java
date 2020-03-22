@@ -19,7 +19,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 /**
  * @author yong
- * @date 2019/7/8
+ * @date 2018/7/8
  * 异常处理,重写oauth 默认实现
  */
 @Slf4j

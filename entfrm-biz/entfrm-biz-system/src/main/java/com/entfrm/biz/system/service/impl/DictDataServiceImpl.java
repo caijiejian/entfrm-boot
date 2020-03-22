@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.entfrm.biz.system.entity.DictData;
 import com.entfrm.biz.system.mapper.DictDataMapper;
 import com.entfrm.biz.system.service.DictDataService;
-import com.entfrm.core.base.config.EntfrmConfig;
+import com.entfrm.core.base.config.GlobalConfig;
 import com.entfrm.core.base.util.StrUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,7 +32,7 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, DictData> i
     public List<DictData> getDictDataList(String dictType) {
         List<DictData> dictDataList = new ArrayList<>();
         //redis缓存
-        if(Boolean.parseBoolean(EntfrmConfig.getRedisSwitch())){
+        if(GlobalConfig.isRedisSwitch()){
             Object dicts = redisTemplate.opsForValue().get(dictType);
             if (!StrUtil.isEmptyIfStr(dicts)) {
                 dictDataList = JSONUtil.toList(JSONUtil.parseArray(dicts.toString()), DictData.class);

@@ -28,4 +28,19 @@
         where d.id = #{deptId}
     </select>
 
+    <select id="selectRoleDeptTree" parameterType="Integer" resultType="String">
+        select concat(d.id, d.name) as name
+        from sys_dept d
+        left join sys_role_dept rd on d.id = rd.dept_id
+        where d.del_flag = '0' and rd.role_id = #{roleId}
+        order by d.parent_id, d.sort
+    </select>
+
+    <select id="selectAreaDeptTree" parameterType="Integer" resultType="String">
+        select concat(d.id, d.name) as name
+        from sys_dept d
+        left join sys_area_dept rd on d.id = rd.dept_id
+        where d.del_flag = '0' and rd.area_id = #{areaId}
+        order by d.parent_id, d.sort
+    </select>
 </mapper>

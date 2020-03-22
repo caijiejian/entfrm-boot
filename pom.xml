@@ -7,12 +7,12 @@
     <groupId>com.entfrm</groupId>
     <artifactId>entfrm</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.0</version>
+    <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>entfrm-core</module>
         <module>entfrm-auth</module>
         <module>entfrm-biz</module>
-        <module>entfrm-core</module>
         <module>entfrm-web</module>
     </modules>
 
@@ -26,6 +26,9 @@
         <mybatis-plus.version>3.3.1</mybatis-plus.version>
         <hutool.version>5.2.0</hutool.version>
         <druid.version>1.1.21</druid.version>
+        <oshi.version>3.9.1</oshi.version>
+        <poi.version>4.1.0</poi.version>
+        <ip2region.version>1.7.2</ip2region.version>
     </properties>
 
     <dependencies>

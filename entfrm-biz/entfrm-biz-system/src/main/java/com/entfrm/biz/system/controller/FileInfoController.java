@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.biz.system.entity.FileInfo;
 import com.entfrm.biz.system.service.FileInfoService;
 import com.entfrm.core.base.api.R;
+import com.entfrm.core.log.annotation.OperLog;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,12 +31,10 @@ import java.util.Map;
 public class FileInfoController {
 
     private final FileInfoService fileInfoService;
-    private final JdbcTemplate jdbcTemplate;
 
     private QueryWrapper<FileInfo> getQueryWrapper(FileInfo fileInfo) {
-        return new QueryWrapper<FileInfo>().like(StrUtil.isNotBlank(fileInfo.getName()), "name", fileInfo.getName()).eq(StrUtil.isNotBlank(fileInfo.getStatus()), "status", fileInfo.getStatus()).eq(StrUtil.isNotBlank(fileInfo.getCategory()), "category", fileInfo.getCategory())
-                .eq(StrUtil.isNotBlank(fileInfo.getObjId()) && !"null".equals(fileInfo.getObjId()), "obj_id", fileInfo.getObjId()).eq(StrUtil.isNotBlank(fileInfo.getBaseName()) && !"null".equals(fileInfo.getBaseName()), "base_name", fileInfo.getBaseName())
-                .orderByDesc("create_time");
+        return new QueryWrapper<FileInfo>().like(StrUtil.isNotBlank(fileInfo.getName()), "name", fileInfo.getName()).eq(StrUtil.isNotBlank(fileInfo.getType()), "type", fileInfo.getType())
+                .between(StrUtil.isNotBlank(fileInfo.getBeginTime()) && StrUtil.isNotBlank(fileInfo.getEndTime()), "create_time", fileInfo.getBeginTime(), fileInfo.getEndTime()).orderByDesc("create_time");
     }
 
     @PreAuthorize("@ps.hasPerm('fileInfo_view')")
@@ -46,6 +45,7 @@ public class FileInfoController {
         return R.ok(fileInfoPage.getRecords(), fileInfoPage.getTotal());
     }
 
+    @OperLog("文件上传")
     @PreAuthorize("@ps.hasPerm('fileInfo_add')")
     @PostMapping("/save")
     @ResponseBody
@@ -54,7 +54,7 @@ public class FileInfoController {
         return R.ok();
     }
 
-
+    @OperLog("文件删除")
     @PreAuthorize("@ps.hasPerm('fileInfo_del')")
     @DeleteMapping("/remove/{id}")
     @ResponseBody

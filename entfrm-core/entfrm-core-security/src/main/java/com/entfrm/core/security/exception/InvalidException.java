@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author entfrm
- * @date 2019/7/8
+ * @date 2018/7/8
  */
 @JsonSerialize(using = EntfrmAuth2ExceptionSerializer.class)
 public class InvalidException extends EntfrmAuth2Exception {

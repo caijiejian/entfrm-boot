@@ -12,5 +12,5 @@ import com.entfrm.biz.system.entity.Config;
  * @since 2019-01-30
  */
 public interface ConfigService extends IService<Config> {
-
+    String getValueByKey(String key);
 }

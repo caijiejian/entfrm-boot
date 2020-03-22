@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.system.mapper.MsginfoPushMapper">
+
+    <resultMap type="MsginfoPush" id="MsginfoPushResult">
+        <result property="id" column="id"/>
+        <result property="msginfoId" column="msginfo_id"/>
+        <result property="receiveId" column="receive_id"/>
+        <result property="isRead" column="is_read"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+    </resultMap>
+
+</mapper>

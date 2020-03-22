@@ -1,10 +1,9 @@
 package com.entfrm.biz.system.controller;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.entfrm.biz.system.entity.Dept;
-import com.entfrm.biz.system.entity.RoleDept;
-import com.entfrm.biz.system.entity.User;
+import com.entfrm.biz.system.entity.*;
 import com.entfrm.biz.system.service.DeptService;
 import com.entfrm.biz.system.service.RoleDeptService;
 import com.entfrm.biz.system.service.UserService;
@@ -14,9 +13,11 @@ import com.entfrm.core.log.annotation.OperLog;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -142,6 +143,16 @@ public class DeptController {
         List<Integer> depts = roleDeptService.list(new QueryWrapper<RoleDept>().eq("role_id", roleId))
                 .stream().map(roleMenu -> roleMenu.getDeptId()).collect(Collectors.toList());
         return R.ok(ResultVo.builder().result(deptService.buildTree(deptList, 0)).extend(depts).build());
+    }
+
+    /**
+     * 加载区域机构列表树
+     */
+    @GetMapping("/areaDeptTreeData")
+    @ResponseBody
+    public List<Map<String, Object>> areaTreeData(Area area) {
+        List<Map<String, Object>> tree = deptService.areaDeptTreeData(area);
+        return tree;
     }
 
 }

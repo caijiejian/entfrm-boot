@@ -102,7 +102,8 @@ public class StrUtil extends cn.hutool.core.util.StrUtil {
 //        DateTime sdate = DateUtil.parseDate("2016/06/29");
 //        System.out.println(mdate.toString("yyyy-MM-dd"));
 //        System.out.println(sdate.toString("yyyy-MM-dd"));
-        String str = "a,b,c";
-        System.out.println("'" + join(str.split(","), "','") + "'");
+        String str = "entfrm.ryTask.ryParams";
+        System.out.println(str.substring(0, str.lastIndexOf(".")));
+        System.out.println(str.substring(str.lastIndexOf(".") + 1));
     }
 }

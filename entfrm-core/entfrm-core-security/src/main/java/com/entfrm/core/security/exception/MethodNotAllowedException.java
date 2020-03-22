@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 /**
  * @author entfrm
- * @date 2019/7/8
+ * @date 2018/7/8
  */
 @JsonSerialize(using = EntfrmAuth2ExceptionSerializer.class)
 public class MethodNotAllowedException extends EntfrmAuth2Exception {

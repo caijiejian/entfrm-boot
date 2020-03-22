@@ -1,9 +1,12 @@
 package com.entfrm.biz.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.entfrm.biz.system.entity.Area;
 import com.entfrm.biz.system.entity.Dept;
+import com.entfrm.biz.system.entity.Role;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -32,4 +35,6 @@ public interface DeptService extends IService<Dept> {
      */
     public Dept selectDeptById(Integer deptId);
 
+
+    public List<Map<String, Object>> areaDeptTreeData(Area area);
 }

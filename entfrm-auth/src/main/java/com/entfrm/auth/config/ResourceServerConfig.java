@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 
 /**
  * @author yong
- * @date 2020/2/10
+ * @date 2020/3/10
  * @description 资源服务器配置
  */
 @Configuration
@@ -23,9 +23,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @SneakyThrows
     public void configure(HttpSecurity http) {
         http
+                // CRSF禁用，因为不使用session
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(
-                        "/oauth/**",
+                        "/oauth/**", "/common/**",
                         "/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();

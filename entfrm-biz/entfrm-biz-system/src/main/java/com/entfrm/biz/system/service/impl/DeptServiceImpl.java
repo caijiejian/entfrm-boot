@@ -1,6 +1,8 @@
 package com.entfrm.biz.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.entfrm.biz.system.entity.Area;
 import com.entfrm.biz.system.entity.Dept;
 import com.entfrm.biz.system.mapper.DeptMapper;
 import com.entfrm.biz.system.service.DeptService;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -95,4 +98,24 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return baseMapper.selectDeptById(deptId);
     }
 
+
+    /**
+     * 根据区域ID查询机构
+     *
+     * @param area 区域对象
+     * @return 机构列表
+     */
+    @Override
+    public List<Map<String, Object>> areaDeptTreeData(Area area) {
+        Integer areaId = area.getId();
+        List<Map<String, Object>> trees = new ArrayList<Map<String, Object>>();
+        List<Dept> deptList = baseMapper.selectList(new QueryWrapper<Dept>().orderByAsc("sort"));
+        /*if (areaId != null) {
+            List<String> roleDeptList = baseMapper.selectAreaDeptTree(areaId);
+            trees = getTrees(deptList, true, roleDeptList);
+        } else {
+            trees = getTrees(deptList, false, null);
+        }*/
+        return trees;
+    }
 }

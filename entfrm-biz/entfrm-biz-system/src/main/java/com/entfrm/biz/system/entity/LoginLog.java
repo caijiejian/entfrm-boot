@@ -40,6 +40,11 @@ public class LoginLog {
     private String loginName;
 
     /**
+     * 登录类型
+     */
+    private String loginType;
+
+    /**
      * 登录IP地址
      */
     private String loginIp;

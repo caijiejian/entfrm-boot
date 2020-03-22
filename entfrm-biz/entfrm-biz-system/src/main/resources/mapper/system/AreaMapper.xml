@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.entfrm.biz.system.mapper.AreaMapper">
+
+    <resultMap type="Area" id="AreaResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="sort" column="sort"/>
+        <result property="type" column="type"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <select id="selectAreaById" parameterType="Integer" resultMap="AreaResult">
+                select d.id, d.parent_id, d.ancestors, d.name, d.code, d.order_num, d.type, d.remarks,
+                (select name from sys_area where area_id = d.parent_id) parent_name
+                from sys_area d
+                where d.del_flag = '0' AND d.id = #{areaId}
+    </select>
+
+    <select id="selectAreaByCode" parameterType="String" resultMap="AreaResult">
+        SELECT a.* from sys_area a LEFT JOIN sys_area_dept ad ON ad.area_id = a.id LEFT JOIN sys_dept d ON d.id = ad.dept_id
+        where d.code = #{deptCode}
+    </select>
+</mapper>

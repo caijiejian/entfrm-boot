@@ -10,6 +10,7 @@ import com.entfrm.biz.system.mapper.UserMapper;
 import com.entfrm.biz.system.service.*;
 import com.entfrm.core.base.exception.BaseException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +29,9 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private final ConfigService configService;
-    private final RoleService roleService;
     private final UserRoleService userRoleService;
     private final DatasourceService datasourceService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -73,11 +74,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      *
      * @param userList        用户数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
-     * @param operName        操作用户
      * @return 结果
      */
     @Override
-    public String importUser(List<User> userList, Boolean isUpdateSupport, String operName) {
+    public String importUser(List<User> userList, Boolean isUpdateSupport) {
         if (userList == null || userList.size() == 0) {
             throw new BaseException("导入用户数据不能为空！");
         }
@@ -85,19 +85,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int failureNum = 0;
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
-        String password = configService.getOne(new QueryWrapper<Config>().eq("key", "sys.user.initPwd")).getValue();
+        String password = configService.getValueByKey("user.initPassword");
         for (User user : userList) {
             try {
                 // 验证是否存在这个用户
                 User u = baseMapper.selectOne(new QueryWrapper<User>().eq("username", user.getUserName()));
                 if (u == null) {
-                    user.setPassword(SecureUtil.md5(user.getUserName() + password));
-                    user.setCreateBy(operName);
+                    user.setPassword(passwordEncoder.encode(password));
                     this.save(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
                 } else if (isUpdateSupport) {
-                    user.setUpdateBy(operName);
                     this.updateById(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");

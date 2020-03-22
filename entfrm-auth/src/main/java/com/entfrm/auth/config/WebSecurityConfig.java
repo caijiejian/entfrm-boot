@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author yong
- * @date 2020/2/10
+ * @date 2020/3/10
  * @description 认证相关配置
  */
 @Configuration
@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /***设置不拦截规则*/
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/static/**", "/druid/**");
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/static/**", "/druid/**", "/ip2region/**");
     }
 }

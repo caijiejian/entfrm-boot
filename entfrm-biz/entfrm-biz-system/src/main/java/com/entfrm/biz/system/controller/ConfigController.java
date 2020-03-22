@@ -46,11 +46,7 @@ public class ConfigController {
 
     @GetMapping("/getByKey/{key}")
     public R getByKey(@PathVariable("key") String key) {
-        Config config = configService.getOne(new QueryWrapper<Config>().eq("`key`", key));
-        if(config != null){
-            return R.ok(config.getValue());
-        }
-        return R.ok();
+        return R.ok(configService.getValueByKey(key));
     }
 
 

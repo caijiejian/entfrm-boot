@@ -1,6 +1,7 @@
 package com.entfrm.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.entfrm.core.base.annotation.Excel;
 import com.entfrm.core.data.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,11 +30,13 @@ public class User extends BaseEntity {
      * 用户ID
      */
     @TableId
+    @Excel(name = "用户编号", cellType = Excel.ColumnType.NUMERIC, prompt = "用户编号")
     private Integer id;
 
     /**
      * 用户名
      */
+    @Excel(name = "用户名")
     private String userName;
 
     /**
@@ -44,6 +47,7 @@ public class User extends BaseEntity {
     /**
      * 昵称
      */
+    @Excel(name = "用户昵称")
     private String nickName;
 
     /**
@@ -54,11 +58,13 @@ public class User extends BaseEntity {
     /**
      * 手机号码
      */
+    @Excel(name = "手机号码")
     private String phone;
 
     /**
      * 用户性别（0男 1女 2未知）
      */
+    @Excel(name = "用户性别", convertExp = "0=男,1=女,2=未知")
     private String sex;
 
     /**
@@ -69,6 +75,7 @@ public class User extends BaseEntity {
     /**
      * 用户邮箱
      */
+    @Excel(name = "用户邮箱")
     private String email;
 
     /**
@@ -78,6 +85,7 @@ public class User extends BaseEntity {
     /**
      * 机构名称
      */
+    @Excel(name = "机构名称")
     private String deptName;
 
     /**
@@ -93,6 +101,7 @@ public class User extends BaseEntity {
     /**
      * 帐号状态（0正常 1停用）
      */
+    @Excel(name = "状态", convertExp = "0=正常,1=停用")
     private String status;
 
     /**

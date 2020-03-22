@@ -3,6 +3,7 @@ package com.entfrm.auth.util;
 import cn.hutool.core.util.URLUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.HttpUtil;
+import com.entfrm.core.base.util.AddressUtil;
 import com.entfrm.core.base.util.DateUtil;
 import com.entfrm.core.base.util.StrUtil;
 import lombok.experimental.UtilityClass;
@@ -21,28 +22,29 @@ import java.util.Objects;
 
 /**
  * @author yong
- * @date 2020/2/19
+ * @date 2020/3/19
  * @description 登录日志 util
  */
 @UtilityClass
 public class LoginLogUtil {
 
-    public PreparedStatementSetter setLoginLog(HttpServletRequest request, String userName, String errorMsg){
-
+    public PreparedStatementSetter setLoginLog(HttpServletRequest request, String loginType, String userName, String errorMsg){
+        String ip = ServletUtil.getClientIP(request);
         return new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, userName);
-                ps.setString(2, ServletUtil.getClientIP(request));
-                ps.setString(3, "XX XX");//oper_addr 操作地址 todo
-                ps.setString(4, request.getHeader("user-agent"));
+                ps.setString(2, loginType);
+                ps.setString(3, ip);
+                ps.setString(4, AddressUtil.getCityInfo(ip));
+                ps.setString(5, request.getHeader("user-agent"));
                 if (StrUtil.isNotBlank(errorMsg)) {
-                    ps.setString(5, "1");
-                    ps.setString(6, errorMsg);
+                    ps.setString(6, "1");
+                    ps.setString(7, errorMsg);
                 } else {
-                    ps.setString(5, "0");
-                    ps.setString(6, "");
+                    ps.setString(6, "0");
+                    ps.setString(7, "");
                 }
-                ps.setString(7, DateUtil.now());
+                ps.setString(8, DateUtil.now());
             }
         };
     }

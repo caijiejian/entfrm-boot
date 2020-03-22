@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.entfrm.biz.system.entity.Config;
 import com.entfrm.biz.system.entity.Role;
 import com.entfrm.biz.system.entity.User;
 import com.entfrm.biz.system.entity.UserRole;
@@ -17,17 +16,23 @@ import com.entfrm.biz.system.vo.ResultVo;
 import com.entfrm.core.base.api.R;
 import com.entfrm.core.base.constant.CommonConstants;
 import com.entfrm.core.base.constant.SqlConstants;
+import com.entfrm.core.base.util.ExcelUtil;
+import com.entfrm.core.data.annotation.DataFilter;
 import com.entfrm.core.log.annotation.OperLog;
 import com.entfrm.core.security.entity.EntfrmUser;
 import com.entfrm.core.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,9 +54,7 @@ public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final RoleService roleService;
-    private final ConfigService configService;
     private final PasswordEncoder passwordEncoder;
-    private final DeptService deptService;
     private final JdbcTemplate jdbcTemplate;
 
     private QueryWrapper<User> getQueryWrapper(User user) {
@@ -63,7 +66,7 @@ public class UserController {
     @PreAuthorize("@ps.hasPerm('user_view')")
     @GetMapping("/list")
     @ResponseBody
-    //@DataFilter
+    @DataFilter
     public R list(Page page, User user) {
         IPage<User> userIPage = userService.page(page, getQueryWrapper(user));
         return R.ok(userIPage.getRecords(), userIPage.getTotal());
@@ -180,12 +183,12 @@ public class UserController {
     @PreAuthorize("@ps.hasPerm('user_edit')")
     @PutMapping("/updatePwd")
     @ResponseBody
-    public R updatePwd(@RequestBody User user) {
-        User user1= userService.getById(SecurityUtil.getUser().getId());
-        if(user1 !=null && passwordEncoder.matches(user.getPassword(), user1.getPassword())){
+    public R updatePwd(User user) {
+        User user1 = userService.getById(SecurityUtil.getUser().getId());
+        if (user1 != null && passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
             userService.update(new UpdateWrapper<User>().eq("id", user1.getId()).set("password", passwordEncoder.encode(user.getNewPassword())));
             return R.ok();
-        }else {
+        } else {
             return R.error("原密码有误，请重试");
         }
     }
@@ -211,4 +214,25 @@ public class UserController {
         return R.ok();
     }
 
+    @SneakyThrows
+    @OperLog("用户数据导出")
+    @PreAuthorize("@ps.hasPerm('user_export')")
+    @GetMapping("/exportUser")
+    @ResponseBody
+    public R exportUser(User user, HttpServletResponse response, HttpServletRequest request) {
+        List<User> list = userService.list(getQueryWrapper(user));
+        ExcelUtil<User> util = new ExcelUtil<User>(User.class);
+        return util.exportExcel(list, "用户数据");
+    }
+
+    @SneakyThrows
+    @OperLog("用户数据导入")
+    @PreAuthorize("@ps.hasPerm('user_import')")
+    @PostMapping("/importUser")
+    public R importUser(MultipartFile file, boolean updateSupport) {
+        ExcelUtil<User> util = new ExcelUtil<User>(User.class);
+        List<User> userList = util.importExcel(file.getInputStream());
+        String message = userService.importUser(userList, updateSupport);
+        return R.ok(message);
+    }
 }
