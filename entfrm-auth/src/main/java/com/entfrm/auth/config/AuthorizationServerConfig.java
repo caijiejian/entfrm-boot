@@ -53,17 +53,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .tokenEnhancer(enhancerChain)
                 .accessTokenConverter(jwtAccessTokenConverter)
                 .userDetailsService(userDetailService)
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);//允许 GET、POST 请求获取 token，即访问端点：oauth/token
 
-        endpoints.reuseRefreshTokens(true);
-        endpoints.exceptionTranslator(new EntfrmWebResponseExceptionTranslator());
+        endpoints.reuseRefreshTokens(true);//oauth2登录异常处理
+        endpoints.exceptionTranslator(new EntfrmWebResponseExceptionTranslator());//oauth2登录异常处理
     }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
         oauthServer
                 .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients();
+                .allowFormAuthenticationForClients();//允许表单认证
     }
 
     @Override
@@ -73,6 +73,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public ClientDetailsService clientDetails() {
-        return new JdbcClientDetailsService(dataSource);
+        return new JdbcClientDetailsService(dataSource);//客户端配置 使用jdbc数据库存储
     }
 }

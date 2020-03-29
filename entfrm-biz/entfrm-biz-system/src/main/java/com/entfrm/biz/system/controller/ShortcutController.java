@@ -1,11 +1,13 @@
 package com.entfrm.biz.system.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.entfrm.biz.system.entity.Shortcut;
 import com.entfrm.biz.system.service.ShortcutService;
 import com.entfrm.core.base.api.R;
+import com.entfrm.core.log.annotation.OperLog;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +27,8 @@ public class ShortcutController {
     private final ShortcutService shortcutService;
 
     private QueryWrapper<Shortcut> getQueryWrapper(Shortcut shortcut) {
-        return new QueryWrapper<Shortcut>().orderByDesc("create_time");
+        return new QueryWrapper<Shortcut>().like(StrUtil.isNotBlank(shortcut.getName()), "name", shortcut.getName()).eq(StrUtil.isNotBlank(shortcut.getRegion()), "region", shortcut.getRegion())
+                .between(StrUtil.isNotBlank(shortcut.getBeginTime()) && StrUtil.isNotBlank(shortcut.getEndTime()), "create_time", shortcut.getBeginTime(), shortcut.getEndTime()).orderByDesc("create_time");
     }
 
     @PreAuthorize("@ps.hasPerm('shortcut_view')")
@@ -41,6 +44,7 @@ public class ShortcutController {
         return R.ok(shortcutService.getById(id));
     }
 
+    @OperLog("快捷方式新增")
     @PreAuthorize("@ps.hasPerm('shortcut_add')")
     @PostMapping("/save")
     @ResponseBody
@@ -49,6 +53,7 @@ public class ShortcutController {
         return R.ok();
     }
 
+    @OperLog("快捷方式修改")
     @PreAuthorize("@ps.hasPerm('shortcut_edit')")
     @PutMapping("/update")
     @ResponseBody
@@ -57,6 +62,7 @@ public class ShortcutController {
         return R.ok();
     }
 
+    @OperLog("快捷方式删除")
     @PreAuthorize("@ps.hasPerm('shortcut_del')")
     @DeleteMapping("/remove/{id}")
     @ResponseBody

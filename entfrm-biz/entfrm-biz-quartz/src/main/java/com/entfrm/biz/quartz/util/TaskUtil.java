@@ -82,6 +82,21 @@ public class TaskUtil {
     }
 
     /**
+     * 立即执行定时任务一次
+     *
+     * @param job
+     * @param scheduler
+     */
+    public void runJob(Job job, Scheduler scheduler) {
+        try {
+            if (scheduler != null) {
+                scheduler.triggerJob(getJobKey(job));
+            }
+        } catch (SchedulerException e) {
+            log.error("执行任务失败，失败信息：{}", e.getMessage());
+        }
+    }
+    /**
      * 暂停定时任务
      *
      * @param job
@@ -90,7 +105,7 @@ public class TaskUtil {
     public void pauseJob(Job job, Scheduler scheduler) {
         try {
             if (scheduler != null) {
-                scheduler.pauseJob(getJobKey(job));
+                scheduler.triggerJob(getJobKey(job));
             }
         } catch (SchedulerException e) {
             log.error("暂停任务失败，失败信息：{}", e.getMessage());

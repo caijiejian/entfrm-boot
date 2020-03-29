@@ -1,9 +1,6 @@
 package com.entfrm.biz.system.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,13 +53,16 @@ public class FileInfo implements Serializable {
     private String status;
 
     /** 创建者 */
-    protected String createBy;
+    private String createBy;
 
     /** 创建时间 */
-    protected Date createTime;
+    private Date createTime;
 
     /** 备注 */
-    protected String remarks;
+    private String remarks;
+
+    @TableLogic
+    private String delFlag;
 
     /** 开始时间 */
     @TableField(exist = false)

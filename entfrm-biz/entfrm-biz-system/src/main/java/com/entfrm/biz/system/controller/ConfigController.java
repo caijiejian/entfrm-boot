@@ -54,7 +54,7 @@ public class ConfigController {
     @PreAuthorize("@ps.hasPerm('config_add')")
     @PostMapping("/save")
     @ResponseBody
-    public R save(@Validated Config config) {
+    public R save(@Validated @RequestBody Config config) {
         configService.save(config);
         return R.ok();
     }
@@ -63,7 +63,7 @@ public class ConfigController {
     @PreAuthorize("@ps.hasPerm('config_edit')")
     @PutMapping("/update")
     @ResponseBody
-    public R update(@Validated Config config) {
+    public R update(@Validated @RequestBody Config config) {
         configService.updateById(config);
         return R.ok();
     }

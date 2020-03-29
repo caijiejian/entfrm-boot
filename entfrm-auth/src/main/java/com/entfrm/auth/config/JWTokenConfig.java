@@ -35,12 +35,12 @@ public class JWTokenConfig {
         DefaultUserAuthenticationConverter userAuthenticationConverter = new DefaultUserAuthenticationConverter();
         userAuthenticationConverter.setUserDetailsService(userDetailService);
         defaultAccessTokenConverter.setUserTokenConverter(userAuthenticationConverter);
-        accessTokenConverter.setSigningKey("entfrm");
+        accessTokenConverter.setSigningKey("entfrm");//对称加密key
         return accessTokenConverter;
     }
 
     @Bean
     public TokenEnhancer tokenEnhancer() {
-        return new JWTTokenEnhancer();
+        return new JWTTokenEnhancer(); // token增强
     }
 }

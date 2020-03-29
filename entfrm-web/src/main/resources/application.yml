@@ -87,7 +87,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/entfrm?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/entfrm?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&allowMultiQueries=true
       username: root
       password: 123456Aa
       # 初始连接数
@@ -126,8 +126,8 @@ spring:
 
 # MyBatis Plus
 mybatis-plus:
-  mapper-locations: classpath*:mapper/system/*.xml
-  typeAliasesPackage: com.entfrm.biz.system.entity
+  mapper-locations: classpath*:mapper/**/*.xml
+  typeAliasesPackage: com.entfrm.biz.**.entity
   global-config:
     # 不显示banner
     banner: false

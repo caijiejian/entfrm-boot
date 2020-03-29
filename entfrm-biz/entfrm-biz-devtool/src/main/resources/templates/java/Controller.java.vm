@@ -1,0 +1,121 @@
+package ${basePackage}.${moduleName}.controller;
+
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ${packageName}.entity.${ClassName};
+import ${packageName}.service.${ClassName}Service;
+import com.entfrm.core.log.annotation.OperLog;
+import org.springframework.security.access.prepost.PreAuthorize;
+import com.entfrm.core.base.api.R;
+import com.entfrm.core.base.util.ExcelUtil;
+import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Arrays;
+#if($table.tplCategory == 'crud')
+
+#elseif($table.tplCategory == 'tree')
+import com.entfrm.core.entity.Ztree;
+#end
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ *
+ * @description ${functionName}Controller
+ */
+@RestController
+@AllArgsConstructor
+@RequestMapping("/${moduleName}/${businessName}")
+public class ${ClassName}Controller {
+
+    private final ${ClassName}Service ${className}Service;
+
+    private QueryWrapper<${ClassName}> getQueryWrapper(${ClassName} ${className}) {
+        return new QueryWrapper<${ClassName}>().orderByDesc("create_time");
+    }
+
+    #if($table.tplCategory == 'tree')
+        /**
+         * 查询${functionName}树列表
+         */
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_view')")
+        @PostMapping("/list")
+        @ResponseBody
+        public List<${ClassName}> list(${ClassName} ${className}) {
+            List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+            return list;
+        }
+    #elseif($table.tplCategory == 'crud')
+
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_view')")
+        @GetMapping("/list")
+        @ResponseBody
+        public R list(Page page, ${ClassName} ${className}) {
+            IPage<${ClassName}> ${className}Page = ${className}Service.page(page, getQueryWrapper(${className}));
+            return R.ok(${className}Page.getRecords(), ${className}Page.getTotal());
+        }
+    #end
+
+    @OperLog("${functionName}新增")
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_add')")
+    @PostMapping("/save")
+    @ResponseBody
+    public R save(@Validated @RequestBody ${ClassName} ${className}) {
+        ${className}Service.save(${className});
+        return R.ok();
+    }
+
+    @OperLog("${functionName}修改")
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_edit')")
+    @PutMapping("/update")
+    @ResponseBody
+    public R update(@Validated @RequestBody ${ClassName} ${className}) {
+        ${className}Service.updateById(${className});
+        return R.ok();
+    }
+
+    #if($table.tplCategory == 'crud')
+
+        @OperLog("${functionName}删除")
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
+        @GetMapping("/remove/{${pkColumn.javaField}}")
+        @ResponseBody
+        public R remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+            return R.ok(${className}Service.removeById(${pkColumn.javaField}));
+        }
+
+    #elseif($table.tplCategory == 'tree')
+
+        @OperLog("${functionName}删除")
+        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
+        @GetMapping("/remove/{${pkColumn.javaField}}")
+        @ResponseBody
+        public AjaxResult remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+            return toAjax(${className}Service.delete${ClassName}ById(${pkColumn.javaField}));
+        }
+    #end
+
+    #if($table.tplCategory == 'tree')
+
+        @GetMapping("/treeData")
+        @ResponseBody
+        public List<Ztree> treeData() {
+            List<Ztree> ztrees = ${className}Service.select${ClassName}Tree();
+            return ztrees;
+        }
+    #end
+
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_export')")
+    @PostMapping("/export")
+    @ResponseBody
+    public R export(${ClassName} ${className}) {
+        List<${ClassName}> list = ${className}Service.list(getQueryWrapper(${className}));
+        ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}. class);
+        return util.exportExcel(list, "${functionName}数据");
+    }
+}

@@ -204,7 +204,7 @@ public class ExcelUtil<T> {
                         } else if (StrUtil.isNotEmpty(attr.convertExp())) {
                             val = reverseByExp(String.valueOf(val), attr.convertExp());
                         }
-                        ReflectUtil.invoke(entity, propertyName, val);
+                        ReflectUtil.setFieldValue(entity, propertyName, val);
                     }
                 }
                 list.add(entity);

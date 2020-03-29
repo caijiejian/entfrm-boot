@@ -7,6 +7,7 @@ import com.entfrm.biz.system.entity.Datasource;
 import com.entfrm.biz.system.service.DatasourceService;
 import com.entfrm.core.base.api.R;
 import com.entfrm.core.data.config.DynamicDataSourceConfig;
+import com.entfrm.core.data.util.AliasUtil;
 import com.entfrm.core.log.annotation.OperLog;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,6 +61,9 @@ public class DatasourceController {
     @ResponseBody
     public R save(@RequestBody Datasource datasource) {
         datasourceService.save(datasource);
+        //保存id后更新 别名
+        datasource.setAlias(AliasUtil.genAlias(datasource.getDriverClassName(), datasource.getName(), datasource.getId()));
+        datasourceService.updateById(datasource);
         dynamicDataSourceConfig.reload();
         return R.ok();
     }
@@ -69,6 +73,7 @@ public class DatasourceController {
     @PutMapping("/update")
     @ResponseBody
     public R update(@RequestBody Datasource datasource) {
+        datasource.setAlias(AliasUtil.genAlias(datasource.getDriverClassName(), datasource.getName(), datasource.getId()));
         datasourceService.updateById(datasource);
         dynamicDataSourceConfig.reload();
         return R.ok();

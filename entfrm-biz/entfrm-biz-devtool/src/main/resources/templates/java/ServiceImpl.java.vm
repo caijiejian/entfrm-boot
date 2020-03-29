@@ -1,0 +1,22 @@
+package ${packageName}.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+#if($table.tplCategory == 'tree')
+import java.util.ArrayList;
+import com.tumengtech.core.entity.Ztree;
+#end
+import org.springframework.stereotype.Service;
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.entity.${ClassName};
+import ${packageName}.service.${ClassName}Service;
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ *
+ * @description ${functionName}Service业务层
+ */
+@Service
+public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${ClassName}> implements ${ClassName}Service {
+
+}

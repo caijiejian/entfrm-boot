@@ -6,6 +6,7 @@ import com.entfrm.core.base.config.GlobalConfig;
 import com.entfrm.core.base.constant.CommonConstants;
 import com.entfrm.core.base.exception.BaseException;
 import com.entfrm.core.base.util.FileUtil;
+import com.entfrm.core.base.util.RequestUtil;
 import com.entfrm.core.base.util.StrUtil;
 import com.entfrm.core.base.util.UploadUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.Date;
  */
 @Slf4j
 @RestController
-@RequestMapping("/common")
+@RequestMapping("/common" )
 public class CommonController {
 
     /**
@@ -33,17 +34,17 @@ public class CommonController {
      * @param fileName 文件名称
      * @param delete   是否删除
      */
-    @GetMapping("/download")
+    @GetMapping("/download" )
     public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request) {
         try {
             if (!ReUtil.contains(FileUtil.FILENAME_PATTERN, fileName)) {
                 throw new BaseException(StrUtil.format("文件名称({})非法，不允许下载。 ", fileName));
             }
-            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_" ) + 1);
             String filePath = GlobalConfig.getDownloadPath() + fileName;
 
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("multipart/form-data");
+            response.setCharacterEncoding("utf-8" );
+            response.setContentType("multipart/form-data" );
             response.setHeader("Content-Disposition",
                     "attachment;fileName=" + FileUtil.setFileDownloadHeader(request, realFileName));
             FileUtil.writeToStream(filePath, response.getOutputStream());
@@ -58,16 +59,15 @@ public class CommonController {
     /**
      * 通用上传请求
      */
-    @PostMapping("/upload")
-    public R uploadFile(MultipartFile file) throws Exception {
+    @PostMapping("/upload" )
+    public R uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
             // 上传文件路径
-            String filePath = GlobalConfig.getUploadPath();
-            String spath = "/ufile/file/";
+            String filePath = GlobalConfig.getUploadPath();;
             String newFileName = "file" + new Date().getTime();
             // 上传并返回新文件名称
             String fileName = UploadUtil.fileUp(file, filePath, newFileName);
-            return R.ok(spath+ fileName);
+            return R.ok(RequestUtil.getDomain(request) + "/profile/upload/" + fileName);
         } catch (Exception e) {
             return R.error(e.getMessage());
         }
@@ -76,7 +76,7 @@ public class CommonController {
     /**
      * 本地资源通用下载
      */
-    @GetMapping("/download/resource")
+    @GetMapping("/download/resource" )
     public void resourceDownload(String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 本地资源路径
         String localPath = GlobalConfig.getProfile();
@@ -84,8 +84,8 @@ public class CommonController {
         String downloadPath = localPath + StrUtil.subAfter(name, CommonConstants.RESOURCE_PREFIX, true);
         // 下载名称
         String downloadName = StrUtil.subAfter(downloadPath, "/", true);
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("multipart/form-data");
+        response.setCharacterEncoding("utf-8" );
+        response.setContentType("multipart/form-data" );
         response.setHeader("Content-Disposition",
                 "attachment;fileName=" + FileUtil.setFileDownloadHeader(request, downloadName));
         FileUtil.writeToStream(downloadPath, response.getOutputStream());

@@ -1,6 +1,7 @@
 package com.entfrm.core.base.util;
 
 import com.entfrm.core.base.config.GlobalConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
@@ -16,9 +17,8 @@ import java.lang.reflect.Method;
  * @date 2019/6/12
  * @description 根据IP地址获取城市
  */
+@Slf4j
 public class AddressUtil {
-
-    private static Logger log = LoggerFactory.getLogger(AddressUtil.class);
 
     public static String getCityInfo(String ip) {
         DbSearcher searcher = null;

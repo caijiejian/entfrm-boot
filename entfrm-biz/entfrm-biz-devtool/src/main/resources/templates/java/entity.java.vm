@@ -1,0 +1,62 @@
+package ${packageName}.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.entfrm.core.base.annotation.Excel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+#if($table.tplCategory == 'crud')
+import com.entfrm.core.data.entity.BaseEntity;
+#elseif($table.tplCategory == 'tree')
+import com.entfrm.core.data.entity.TreeEntity;
+#end
+#foreach ($import in $importList)
+import ${import};
+#end
+
+/**
+ * @author ${author}
+ * @date ${datetime}
+ *
+ * @description ${functionName}对象 ${ClassName}
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@TableName("${tableName}")
+#if($table.tplCategory == 'crud')
+#set($Entity="BaseEntity")
+#elseif($table.tplCategory == 'tree')
+#set($Entity="TreeEntity")
+#end
+public class ${ClassName} extends ${Entity}{
+    private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if(!$column.superColumn)
+    /** $column.columnComment */
+#if($column.isList == '1')
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($parentheseIndex != -1)
+    @Excel(name = "${comment}", convertExp = "$column.convertExp()")
+#elseif($column.javaType == 'Date')
+    @Excel(name = "${comment}", width = 30, dateFormat = "yyyy-MM-dd")
+#else
+    @Excel(name = "${comment}")
+#end
+#end
+#if($column.isPk == '1')
+    @TableId
+#end
+    private $column.javaType $column.javaField;
+
+#end
+#end
+
+}

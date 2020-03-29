@@ -7,7 +7,7 @@ package com.entfrm.core.base.constant;
  */
 public interface CommonConstants {
 	/**
-	 * header 中租户ID
+	 * 数据名称
 	 */
 	String DB_NAME = "entfrm";
 
@@ -34,4 +34,9 @@ public interface CommonConstants {
 	 * 资源映射路径 前缀
 	 */
 	String RESOURCE_PREFIX = "/profile";
+
+	/**
+	 * 作者
+	 */
+	String AUTHOR = "by entfrm";
 }

@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 数据字典信息
  *
@@ -80,5 +82,14 @@ public class DictController {
     public R changeStatus(Dict dict) {
         dictService.updateById(dict);
         return R.ok();
+    }
+
+    /**
+     * 获取所有字典列表
+     */
+    @GetMapping("/dictList")
+    public R dictList() {
+        List<Dict> dictList = dictService.list();
+        return R.ok(dictList);
     }
 }

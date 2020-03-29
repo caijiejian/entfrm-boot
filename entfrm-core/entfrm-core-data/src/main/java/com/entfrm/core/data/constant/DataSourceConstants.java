@@ -13,14 +13,19 @@ public interface DataSourceConstants {
 	String DS_QUERY_SQL = "select * from sys_datasource where del_flag = 0";
 
 	/**
-	 * 动态路由KEY
+	 * 动态路由KEY = 别名
 	 */
-	String DS_ROUTE_KEY = "id";
+	String DS_ALIAS = "id";
 
 	/**
 	 * 数据源名称
 	 */
 	String DS_NAME = "name";
+
+	/**
+	 * 数据驱动
+	 */
+	String DS_JDBC_DRIVER = "driver_class_name";
 
 	/**
 	 * jdbcurl

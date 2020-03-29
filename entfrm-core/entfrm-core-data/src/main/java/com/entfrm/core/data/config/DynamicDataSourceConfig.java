@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * @author entfrm
  * @date 2019-03-31
- * <p>
+ *
  * 动态数据源切换配置
  */
 @Slf4j
@@ -35,7 +35,7 @@ public class DynamicDataSourceConfig {
 	public DynamicDataSource dataSource() {
 		DynamicDataSource ds = new DynamicDataSource();
 		DruidDataSource dds = new DruidDataSource();
-		dds.setUrl(dataSourceProperties.getUrl());
+		dds.setUrl(dataSourceProperties.getJdbcUrl());
 		dds.setDriverClassName(dataSourceProperties.getDriverClassName());
 		dds.setUsername(dataSourceProperties.getUsername());
 		dds.setPassword(dataSourceProperties.getPassword());
@@ -51,7 +51,7 @@ public class DynamicDataSourceConfig {
 	@PostConstruct
 	public void init() {
 		DriverManagerDataSource dds = new DriverManagerDataSource();
-		dds.setUrl(dataSourceProperties.getUrl());
+		dds.setUrl(dataSourceProperties.getJdbcUrl());
 		dds.setDriverClassName(dataSourceProperties.getDriverClassName());
 		dds.setUsername(dataSourceProperties.getUsername());
 		dds.setPassword(dataSourceProperties.getPassword());
@@ -62,12 +62,12 @@ public class DynamicDataSourceConfig {
 			log.info("数据源:{}", db.get(DataSourceConstants.DS_NAME));
 			DruidDataSource ds = new DruidDataSource();
 			ds.setUrl(String.valueOf(db.get(DataSourceConstants.DS_JDBC_URL)));
-			ds.setDriverClassName(Driver.class.getName());
+			ds.setDriverClassName(String.valueOf(db.get(DataSourceConstants.DS_JDBC_DRIVER)));
 			ds.setUsername((String) db.get(DataSourceConstants.DS_USER_NAME));
 
 			String decPwd = (String) db.get(DataSourceConstants.DS_USER_PWD);
 			ds.setPassword(decPwd);
-			dataSourceMap.put(db.get(DataSourceConstants.DS_ROUTE_KEY), ds);
+			dataSourceMap.put(db.get(DataSourceConstants.DS_ALIAS), ds);
 		}));
 
 		log.info("完毕 -> 初始化动态数据源,共计 {} 条", dataSourceMap.size());

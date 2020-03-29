@@ -53,4 +53,9 @@ public class Datasource extends BaseEntity {
      * 密码
      */
     private String password;
+
+    /**
+     * 别名
+     */
+    private String alias;
 }

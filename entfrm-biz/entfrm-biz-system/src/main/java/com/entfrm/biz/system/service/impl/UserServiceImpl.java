@@ -30,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final ConfigService configService;
     private final UserRoleService userRoleService;
-    private final DatasourceService datasourceService;
+    private final DeptService deptService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -89,10 +89,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         for (User user : userList) {
             try {
                 // 验证是否存在这个用户
-                User u = baseMapper.selectOne(new QueryWrapper<User>().eq("username", user.getUserName()));
+                User u = baseMapper.selectOne(new QueryWrapper<User>().eq("user_name", user.getUserName()));
                 if (u == null) {
                     user.setPassword(passwordEncoder.encode(password));
-                    this.save(user);
+                    if(StrUtil.isNotBlank(user.getDeptName())){
+                        Dept dept = deptService.getOne(new QueryWrapper<Dept>().eq("name", user.getDeptName()));
+                        if(dept != null){
+                            user.setDeptId(dept.getId());
+                            user.setDeptName(dept.getName());
+                        }
+                    }
+                    baseMapper.insert(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
                 } else if (isUpdateSupport) {

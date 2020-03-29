@@ -1,5 +1,6 @@
 package com.entfrm.auth.config;
 
+import com.entfrm.core.base.config.GlobalConfig;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author yong
@@ -17,7 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 @EnableResourceServer
 @AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter implements WebMvcConfigurer {
 
     @Override
     @SneakyThrows
@@ -28,9 +31,15 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(
                         "/oauth/**", "/common/**",
-                        "/actuator/**").permitAll()
+                        "/actuator/**" ).permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        /** 本地文件上传路径 */
+        registry.addResourceHandler("/profile/**" ).addResourceLocations("file:" + GlobalConfig.getProfile() + "/" );
     }
 
 }

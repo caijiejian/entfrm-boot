@@ -12,64 +12,42 @@ import java.util.Map;
 /**
  * 文件上传工具类
  *
- * @author yangdc
- * @date Apr 18, 2012
- *
- * <pre>
- * </pre>
+ * @author yong
+ * @date 2017-03-02 16:33:24
  */
 public class UploadUtil {
-    /**
-     * 表单字段常量
-     */
-    public static final String FORM_FIELDS = "form_fields";
-    /**
-     * 文件域常量
-     */
-    public static final String FILE_FIELDS = "file_fields";
 
     // 最大文件大小
     private long maxSize = 10 * 1024 * 1024;
-    // 定义允许上传的文件扩展名
-    private Map<String, String> extMap = new HashMap<String, String>();
-    // 文件保存目录相对路径
-    private String basePath = "/upload";
-    // 文件的目录名
-    private String dirName = "/images";
-    // 上传临时路径
-    private static final String TEMP_PATH = "/temp";
-    private String tempPath = basePath + TEMP_PATH;
-    // 若不指定则文件名默认为 yyyyMMddHHmmss_xyz
-    private String fileName;
 
-    // 文件保存目录路径
-    private String savePath;
     // 文件保存目录url
     private String saveUrl;
-    // 文件最终的url包括文件名
-    private String fileUrl;
+
+    private static String image = "gif,jpg,jpeg,png,bmp";
+
+    private static String media = "swf,flv,mp3,mp4,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb";
+
+    private static String file = "doc,docx,xls,xlsx,ppt,pptx,htm,html,txt,zip,rar,gz,bz2";
 
     public UploadUtil() {
-        // 其中images,flashs,medias,files,对应文件夹名称,对应dirName
-        // key文件夹名称
-        // value该文件夹内可以上传文件的后缀名
-        extMap.put("images", "gif,jpg,jpeg,png,bmp");
-        extMap.put("flashs", "swf,flv");
-        extMap.put("medias", "swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb");
-        extMap.put("files", "doc,docx,xls,xlsx,ppt,htm,html,txt,zip,rar,gz,bz2");
+
     }
 
     /**
-     * 删除指定路径文件
+     * 获取文件类型
      *
-     * @param path
-     * @param request
+     * @param fileFormat
      */
-    public void deleteFile(String path, HttpServletRequest request) {
-        saveUrl = request.getContextPath() + "/" + basePath + "/";
-        File file = new File(saveUrl + path);
-        if (file.exists() && file.isFile())
-            file.delete();
+    public static String getType(String fileFormat) {
+        if(StrUtil.contains(image, fileFormat)){
+            return "image";
+        }else if(StrUtil.contains(media, fileFormat)){
+            return "media";
+        }else if(StrUtil.contains(file, fileFormat)){
+            return "file";
+        }else {
+            return "other";
+        }
     }
 
     /**
@@ -83,6 +61,9 @@ public class UploadUtil {
         try {
             if (file.getOriginalFilename().lastIndexOf(".") >= 0) {
                 extName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            }
+            if (StrUtil.isBlank(extName)) {
+                extName = ".png";
             }
             copyFile(file.getInputStream(), filePath, fileName + extName).replaceAll("-", "");
         } catch (IOException e) {
@@ -112,72 +93,6 @@ public class UploadUtil {
 
         FileUtil.copyInputStreamToFile(in, file);
         return realName;
-    }
-
-
-    /**
-     * *********************get/set方法*********************************
-     */
-
-    public String getSavePath() {
-        return savePath;
-    }
-
-    public String getSaveUrl() {
-        return saveUrl;
-    }
-
-    public long getMaxSize() {
-        return maxSize;
-    }
-
-    public void setMaxSize(long maxSize) {
-        this.maxSize = maxSize;
-    }
-
-    public Map<String, String> getExtMap() {
-        return extMap;
-    }
-
-    public void setExtMap(Map<String, String> extMap) {
-        this.extMap = extMap;
-    }
-
-    public String getBasePath() {
-        return basePath;
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-        tempPath = basePath + TEMP_PATH;
-    }
-
-    public String getDirName() {
-        return dirName;
-    }
-
-    public void setDirName(String dirName) {
-        this.dirName = dirName;
-    }
-
-    public String getTempPath() {
-        return tempPath;
-    }
-
-    public void setTempPath(String tempPath) {
-        this.tempPath = tempPath;
-    }
-
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
 }

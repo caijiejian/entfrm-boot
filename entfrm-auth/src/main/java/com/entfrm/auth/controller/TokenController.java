@@ -1,15 +1,18 @@
 package com.entfrm.auth.controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.entfrm.core.base.api.R;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author yong
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TokenController {
 
     private final TokenStore tokenStore;
+
+    private final AuthorizationServerEndpointsConfiguration endpoints;
 
     /**
      * 退出token
@@ -45,4 +50,30 @@ public class TokenController {
 
         return R.ok();
     }
+
+    /**
+     * 令牌管理调用
+     *
+     * @param token token
+     * @return
+     */
+    @DeleteMapping("/{token}")
+    public R<Boolean> delToken(@PathVariable("token") String token) {
+        OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(token);
+        tokenStore.removeAccessToken(oAuth2AccessToken);
+        return new R<>();
+    }
+
+    /**
+     * 查询令牌信息列表
+     *
+     * @return
+     */
+    @GetMapping("/list")
+    @ResponseBody
+    public R list() {
+        Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientId("entfrm");
+        return R.ok(JSONUtil.toJsonStr(accessTokens));
+    }
+
 }

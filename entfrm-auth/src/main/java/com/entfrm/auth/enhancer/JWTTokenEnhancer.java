@@ -21,6 +21,7 @@ public class JWTTokenEnhancer implements TokenEnhancer {
         Map<String, Object> info = new HashMap<>();
         info.put("license", "entfrm");
         ((DefaultOAuth2AccessToken) oAuth2AccessToken).setAdditionalInformation(info);
+
         //设置token的过期时间120分钟
         Calendar nowTime = Calendar.getInstance();
         nowTime.add(Calendar.MINUTE, 120);
