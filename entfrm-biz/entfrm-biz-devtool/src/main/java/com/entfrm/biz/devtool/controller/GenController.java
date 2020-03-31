@@ -11,15 +11,12 @@ import com.entfrm.biz.devtool.entity.Table;
 import com.entfrm.biz.devtool.service.ColumnService;
 import com.entfrm.biz.devtool.service.TableService;
 import com.entfrm.core.base.api.R;
-import com.entfrm.core.security.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +45,7 @@ public class GenController {
     @PutMapping("/update")
     @ResponseBody
     public R update(@RequestBody Table table) {
-        //tableService.validateEdit(table);
+        tableService.validateEdit(table);
         tableService.updateTable(table);
         return R.ok();
     }

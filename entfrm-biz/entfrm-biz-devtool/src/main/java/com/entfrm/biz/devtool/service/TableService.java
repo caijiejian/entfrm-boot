@@ -16,7 +16,7 @@ public interface TableService extends IService<Table> {
      *
      * @param tableName  表名
      */
-    public Map<String, Object> getGenTable(String tableName, String tableComment);
+    public Table getGenTable(String tableName, String tableComment);
 
     /**
      * 修改保存参数校验

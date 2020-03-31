@@ -43,6 +43,17 @@ export function del${ClassName}(${pkColumn.javaField}) {
   })
 }
 
+#if($table.tplCategory == 'tree')
+// 查询${functionName}下拉树结构
+export function ${className}Tree() {
+  return request({
+    url: '/${moduleName}/${businessName}/${className}Tree',
+    method: 'get'
+  })
+}
+#end
+
+
 // 导出${functionName}
 export function export${ClassName}(query) {
   return request({

@@ -2,8 +2,8 @@ package ${packageName}.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import ${packageName}.entity.${ClassName};
-#if($table.tree)
-##import com.entfrm.core.entity.Ztree;
+#if($table.tplCategory == 'tree')
+import java.util.List;
 #end
 
 /**
@@ -13,5 +13,14 @@ import ${packageName}.entity.${ClassName};
  * @description ${functionName}Service接口
  */
 public interface ${ClassName}Service extends IService<${ClassName}> {
-
+    #if($table.tplCategory == 'tree')
+      /**
+       * 构建树
+       *
+       * @param list   分类表
+       * @param parentId 传入的父节点ID
+       * @return String
+     */
+        public List<${ClassName}> buildTree(List<${ClassName}> list, int parentId);
+    #end
 }

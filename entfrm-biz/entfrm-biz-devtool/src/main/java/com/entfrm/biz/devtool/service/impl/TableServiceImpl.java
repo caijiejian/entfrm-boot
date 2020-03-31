@@ -17,15 +17,13 @@ import com.entfrm.biz.devtool.util.VelocityInitializer;
 import com.entfrm.biz.devtool.util.VelocityUtil;
 import com.entfrm.core.base.constant.CommonConstants;
 import com.entfrm.core.base.constant.GenConstants;
+import com.entfrm.core.base.exception.BaseException;
 import com.entfrm.core.security.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,16 +53,15 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
      */
     @Override
     @Transactional
-    public Map<String, Object> getGenTable(String tableName, String tableComment) {
+    public Table getGenTable(String tableName, String tableComment) {
         Map<String, Object> map = new HashMap<String, Object>();
-        Table table1 = baseMapper.selectOne(new QueryWrapper<Table>().eq("table_name", tableName));
-        if (table1 != null) {
-            map.put("table", table1);
-            List<Column> list = columnService.list(new QueryWrapper<Column>().eq(!StrUtil.isBlankIfStr(table1.getId()), "table_id", table1.getId()).orderByAsc("sort"));
-            map.put("columns", list);
+        Table table = baseMapper.selectOne(new QueryWrapper<Table>().eq("table_name", tableName));
+        if (table != null) {
+            List<Column> list = columnService.list(new QueryWrapper<Column>().eq(!StrUtil.isBlankIfStr(table.getId()), "table_id", table.getId()).orderByAsc("sort"));
+            table.setColumns(list);
         } else {
             //表信息新增
-            Table table = new Table();
+            table = new Table();
             table.setTableName(tableName);
             table.setTableComment(tableComment);
             if ("true".equals(GenConfig.getAutoRemovePre()) && StrUtil.isNotBlank(GenConfig.getTablePrefix())) {
@@ -79,7 +76,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
             table.setFunctionAuthor(GenConfig.getAuthor());
             table.setCreateBy(SecurityUtil.getUser().getUsername());
             baseMapper.insert(table);
-            map.put("table", table);
             //表列 信息新增
             List<Column> columns = columnService.selectDbColumnsByName(tableName);
             List<Column> list = new ArrayList<>();
@@ -157,9 +153,9 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
                 columnService.save(column);
                 list.add(column);
             }
-            map.put("columns", list);
+            table.setColumns(list);
         }
-        return map;
+        return table;
     }
 
     /**
@@ -169,15 +165,15 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
      */
     public void validateEdit(Table table) {
         if (GenConstants.TPL_TREE.equals(table.getTplCategory())) {
-            /*String options = JSONUtil.toJsonStr(table.getParams());
+            String options = JSONUtil.toJsonStr(table.getParams());
             JSONObject paramsObj = JSONUtil.parseObj(options);
-            if (StrUtil.isEmpty(paramsObj.getStr(GenConstants.TREE_CODE))) {
-                throw new BaseException("树编码字段不能为空");
-            } else if (StrUtil.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))) {
-                throw new BaseException("树父编码字段不能为空");
+            if (StrUtil.isEmpty(paramsObj.getStr(GenConstants.TREE_ID))) {
+                throw new BaseException("树编号字段不能为空");
+            } else if (StrUtil.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_ID))) {
+                throw new BaseException("树父编号字段不能为空");
             } else if (StrUtil.isEmpty(paramsObj.getStr(GenConstants.TREE_NAME))) {
                 throw new BaseException("树名称字段不能为空");
-            }*/
+            }
         }
     }
 
@@ -190,8 +186,8 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
     @Override
     @Transactional
     public void updateTable(Table table) {
-        /*String options = JSONUtil.toJsonStr(table.getParams());
-        table.setOptions(options);*/
+        String options = JSONUtil.toJsonStr(table.getParams());
+        table.setOptions(options);
         int row = baseMapper.updateById(table);
         if (row > 0) {
             for (Column column : table.getColumns()) {
@@ -412,11 +408,11 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, Table> implements
     public void setTableFromOptions(Table table) {
         JSONObject paramsObj = JSONUtil.parseObj(table.getOptions());
         if (!StrUtil.isEmptyIfStr(paramsObj)) {
-            String treeCode = paramsObj.getStr(GenConstants.TREE_CODE);
-            String treeParentCode = paramsObj.getStr(GenConstants.TREE_PARENT_CODE);
+            String treeID = paramsObj.getStr(GenConstants.TREE_ID);
+            String treeParentID = paramsObj.getStr(GenConstants.TREE_PARENT_ID);
             String treeName = paramsObj.getStr(GenConstants.TREE_NAME);
-            table.setTreeCode(treeCode);
-            table.setTreeParentCode(treeParentCode);
+            table.setTreeId(treeID);
+            table.setTreeParentId(treeParentID);
             table.setTreeName(treeName);
         }
     }

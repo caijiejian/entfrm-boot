@@ -64,16 +64,16 @@ public class VelocityUtil {
         String options = table.getOptions();
         JSONObject paramsObj = JSONUtil.parseObj(options);
 
-        String treeCode = getTreecode(paramsObj);
-        String treeParentCode = getTreeParentCode(paramsObj);
+        String treeId = getTreeId(paramsObj);
+        String treeParentId = getTreeParentId(paramsObj);
         String treeName = getTreeName(paramsObj);
 
-        context.put("treeCode", treeCode);
-        context.put("treeParentCode", treeParentCode);
+        context.put("treeId", treeId);
+        context.put("treeParentId", treeParentId);
         context.put("treeName", treeName);
         context.put("expandColumn", getExpandColumn(table));
-        if (paramsObj.containsKey(GenConstants.TREE_PARENT_CODE)) {
-            context.put("tree_parent_code", paramsObj.getStr(GenConstants.TREE_PARENT_CODE));
+        if (paramsObj.containsKey(GenConstants.TREE_PARENT_ID)) {
+            context.put("tree_parent_id", paramsObj.getStr(GenConstants.TREE_PARENT_ID));
         }
     }
 
@@ -205,9 +205,9 @@ public class VelocityUtil {
      * @param paramsObj 生成其他选项
      * @return 树编码
      */
-    public static String getTreecode(JSONObject paramsObj) {
-        if (paramsObj.containsKey(GenConstants.TREE_CODE)) {
-            return StrUtil.toCamelCase(paramsObj.getStr(GenConstants.TREE_CODE));
+    public static String getTreeId(JSONObject paramsObj) {
+        if (paramsObj.containsKey(GenConstants.TREE_ID)) {
+            return StrUtil.toCamelCase(paramsObj.getStr(GenConstants.TREE_ID));
         }
         return "";
     }
@@ -218,9 +218,9 @@ public class VelocityUtil {
      * @param paramsObj 生成其他选项
      * @return 树父编码
      */
-    public static String getTreeParentCode(JSONObject paramsObj) {
-        if (paramsObj.containsKey(GenConstants.TREE_PARENT_CODE)) {
-            return StrUtil.toCamelCase(paramsObj.getStr(GenConstants.TREE_PARENT_CODE));
+    public static String getTreeParentId(JSONObject paramsObj) {
+        if (paramsObj.containsKey(GenConstants.TREE_PARENT_ID)) {
+            return StrUtil.toCamelCase(paramsObj.getStr(GenConstants.TREE_PARENT_ID));
         }
         return "";
     }

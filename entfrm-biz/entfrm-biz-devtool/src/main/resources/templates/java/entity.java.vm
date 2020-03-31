@@ -6,10 +6,11 @@ import com.entfrm.core.base.annotation.Excel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-#if($table.tplCategory == 'crud')
 import com.entfrm.core.data.entity.BaseEntity;
-#elseif($table.tplCategory == 'tree')
-import com.entfrm.core.data.entity.TreeEntity;
+#if($table.tplCategory == 'tree')
+import com.baomidou.mybatisplus.annotation.TableField;
+import java.util.ArrayList;
+import java.util.List;
 #end
 #foreach ($import in $importList)
 import ${import};
@@ -25,12 +26,7 @@ import ${import};
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("${tableName}")
-#if($table.tplCategory == 'crud')
-#set($Entity="BaseEntity")
-#elseif($table.tplCategory == 'tree')
-#set($Entity="TreeEntity")
-#end
-public class ${ClassName} extends ${Entity}{
+public class ${ClassName} extends BaseEntity{
     private static final long serialVersionUID = 1L;
 
 #foreach ($column in $columns)
@@ -59,4 +55,11 @@ public class ${ClassName} extends ${Entity}{
 #end
 #end
 
+#if($table.tplCategory == 'tree')
+    /**
+    * 子菜单
+    */
+    @TableField(exist = false)
+    private List<${ClassName}> children = new ArrayList<>();
+#end
 }

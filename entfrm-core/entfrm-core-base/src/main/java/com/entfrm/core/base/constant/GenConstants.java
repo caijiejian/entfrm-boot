@@ -17,12 +17,12 @@ public class GenConstants {
     /**
      * 树编码字段
      */
-    public static final String TREE_CODE = "treeCode";
+    public static final String TREE_ID = "treeId";
 
     /**
      * 树父编码字段
      */
-    public static final String TREE_PARENT_CODE = "treeParentCode";
+    public static final String TREE_PARENT_ID = "treeParentId";
 
     /**
      * 树名称字段

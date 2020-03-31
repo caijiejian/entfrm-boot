@@ -98,13 +98,13 @@ public class Table extends BaseEntity {
      * 树编码字段
      */
     @TableField(exist = false)
-    private String treeCode;
+    private String treeId;
 
     /**
      * 树父编码字段
      */
     @TableField(exist = false)
-    private String treeParentCode;
+    private String treeParentId;
 
     /**
      * 树名称字段

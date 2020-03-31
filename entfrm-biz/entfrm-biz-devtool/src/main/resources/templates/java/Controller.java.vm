@@ -2,8 +2,10 @@ package ${basePackage}.${moduleName}.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+#if($table.tplCategory == 'crud')
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+#end
 import ${packageName}.entity.${ClassName};
 import ${packageName}.service.${ClassName}Service;
 import com.entfrm.core.log.annotation.OperLog;
@@ -16,11 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Arrays;
-#if($table.tplCategory == 'crud')
-
-#elseif($table.tplCategory == 'tree')
-import com.entfrm.core.entity.Ztree;
-#end
 
 /**
  * @author ${author}
@@ -44,11 +41,18 @@ public class ${ClassName}Controller {
          * 查询${functionName}树列表
          */
         @PreAuthorize("@ps.hasPerm('${permissionPrefix}_view')")
-        @PostMapping("/list")
+        @GetMapping("/list")
         @ResponseBody
-        public List<${ClassName}> list(${ClassName} ${className}) {
-            List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
-            return list;
+        public R list(${ClassName} ${className}) {
+            List<${ClassName}> ${className}List = ${className}Service.list(getQueryWrapper(${className}));
+        #*if(${className}List.size() >0 ){
+            for(${ClassName} ${className}1 : ${className}List){
+                if(StrUtil.isNotBlank(${className}.getName()) || StrUtil.isNotBlank(${className}.getStatus())){
+                    ${className}1.setParentId(0);
+                }
+            }
+        }*#
+            return R.ok(${className}List);
         }
     #elseif($table.tplCategory == 'crud')
 
@@ -66,7 +70,7 @@ public class ${ClassName}Controller {
     @PostMapping("/save")
     @ResponseBody
     public R save(@Validated @RequestBody ${ClassName} ${className}) {
-        ${className}Service.save(${className});
+            ${className}Service.save(${className});
         return R.ok();
     }
 
@@ -75,38 +79,26 @@ public class ${ClassName}Controller {
     @PutMapping("/update")
     @ResponseBody
     public R update(@Validated @RequestBody ${ClassName} ${className}) {
-        ${className}Service.updateById(${className});
+            ${className}Service.updateById(${className});
         return R.ok();
     }
 
-    #if($table.tplCategory == 'crud')
 
-        @OperLog("${functionName}删除")
-        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
-        @GetMapping("/remove/{${pkColumn.javaField}}")
-        @ResponseBody
-        public R remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
-            return R.ok(${className}Service.removeById(${pkColumn.javaField}));
-        }
+    @OperLog("${functionName}删除")
+    @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
+    @GetMapping("/remove/{${pkColumn.javaField}}")
+    @ResponseBody
+    public R remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return R.ok(${className}Service.removeById(${pkColumn.javaField}));
+    }
 
-    #elseif($table.tplCategory == 'tree')
-
-        @OperLog("${functionName}删除")
-        @PreAuthorize("@ps.hasPerm('${permissionPrefix}_del')")
-        @GetMapping("/remove/{${pkColumn.javaField}}")
-        @ResponseBody
-        public AjaxResult remove(@PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
-            return toAjax(${className}Service.delete${ClassName}ById(${pkColumn.javaField}));
-        }
-    #end
 
     #if($table.tplCategory == 'tree')
-
-        @GetMapping("/treeData")
+        @GetMapping("/${className}Tree")
         @ResponseBody
-        public List<Ztree> treeData() {
-            List<Ztree> ztrees = ${className}Service.select${ClassName}Tree();
-            return ztrees;
+        public R ${className}Tree() {
+            List<${ClassName}> ${className}List = ${className}Service.list(new QueryWrapper<${ClassName}>().orderByAsc("sort"));
+            return R.ok(${className}Service.buildTree(${className}List, 0));
         }
     #end
 

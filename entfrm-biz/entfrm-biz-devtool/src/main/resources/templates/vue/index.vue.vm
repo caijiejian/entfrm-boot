@@ -38,15 +38,27 @@
           <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-#elseif($column.htmlType == "datetime")
-      <el-form-item label="${comment}" prop="${column.javaField}">
-        <el-date-picker clearable size="small" style="width: 0px"
-          v-model="queryParams.${column.javaField}"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择${comment}">
-        </el-date-picker>
+#elseif($column.htmlType == "datetime" && "createTime" == ${column.javaField})
+      <el-form-item label="创建时间">
+        <el-date-picker v-model="dateRange"
+                size="small"
+                style="width: 240px"
+                value-format="yyyy-MM-dd"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
+#elseif($column.htmlType == "datetime" && "createTime" != ${column.javaField})
+    <el-form-item label="${comment}" prop="${column.javaField}">
+        <el-date-picker clearable size="small" style="width: 0px"
+             v-model="queryParams.${column.javaField}"
+             type="date"
+             value-format="yyyy-MM-dd"
+             placeholder="选择${comment}">
+        </el-date-picker>
+    </el-form-item>
 #end
 #end
 #end
@@ -171,9 +183,13 @@
 #set($comment=$column.columnComment)
 #end
 #set($dictType=$column.dictType)
-#if($column.htmlType == "input")
+#if($column.htmlType == "input" && "Integer" != $column.javaType)
         <el-form-item label="${comment}" prop="${field}">
-          <el-input v-model="form.${field}" placeholder="请输入${comment}" />
+          <el-input v-model="form.${field}" placeholder="请输入${comment}$dictType" />
+        </el-form-item>
+#elseif($column.htmlType == "input" && "Integer" == $column.javaType)
+        <el-form-item label="${comment}" prop="${field}">
+            <el-input-number v-model="form.${field}" controls-position="right" :min="0" />
         </el-form-item>
 #elseif($column.htmlType == "select" && "" != $dictType)
         <el-form-item label="${comment}">
@@ -257,6 +273,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 日期范围
+      dateRange: [],
 #foreach ($column in $columns)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -267,7 +285,6 @@ export default {
 #if(${column.dictType} != '')
       // $comment字典
       ${column.javaField}Options: []#if($velocityCount != $columns.size()),#end
-
 #end
 #end
       // 查询参数
@@ -319,7 +336,7 @@ export default {
     /** 查询${functionName}列表 */
     getList() {
       this.loading = true;
-      list${ClassName}(this.queryParams).then(response => {
+      list${ClassName}(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.${businessName}List = response.data;
         this.total = response.total;
         this.loading = false;

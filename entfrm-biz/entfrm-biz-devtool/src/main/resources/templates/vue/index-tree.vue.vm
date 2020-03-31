@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
 #foreach($column in $columns)
 #if($column.isQuery == '1')
 #set($dictType=$column.dictType)
@@ -38,7 +38,19 @@
           <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-#elseif($column.htmlType == "datetime")
+#elseif($column.htmlType == "datetime" && "createTime" == ${column.javaField})
+    <el-form-item label="创建时间">
+        <el-date-picker v-model="dateRange"
+                        size="small"
+                        style="width: 240px"
+                        value-format="yyyy-MM-dd"
+                        type="daterange"
+                        range-separator="-"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+        ></el-date-picker>
+    </el-form-item>
+#elseif($column.htmlType == "datetime" && "createTime" != ${column.javaField})
       <el-form-item label="${comment}" prop="${column.javaField}">
         <el-date-picker clearable size="small" style="width: 0px"
           v-model="queryParams.${column.javaField}"
@@ -58,21 +70,35 @@
           size="mini"
           @click="handleQuery"
         >搜索</el-button>
-        <el-button
-          class="filter-item"
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPerm="['${businessName}_add']"
-        >新增</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+
+      <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+              <el-button
+                      class="filter-item"
+                      type="primary"
+                      icon="el-icon-plus"
+                      size="mini"
+                      @click="handleAdd"
+                      v-hasPerm="['${businessName}_add']"
+              >新增</el-button>
+          </el-col>
+          <div class="top-right-btn">
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                  <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
+                  <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
+              </el-tooltip>
+          </div>
+      </el-row>
 
     <el-table
       v-loading="loading"
       :data="${businessName}List"
-      row-key="${treeCode}"
+      row-key="${treeId}"
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
@@ -122,7 +148,7 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 #foreach($column in $columns)
 #set($field=$column.javaField)
-#if($column.isInsert == '1' && $column.isPk != '1')
+#if($column.isAdd == '1' && $column.isPk == '0')
 #if(($column.usableColumn) || (!$column.superColumn))
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -131,9 +157,9 @@
 #set($comment=$column.columnComment)
 #end
 #set($dictType=$column.dictType)
-#if("" != $treeParentCode && $column.javaField == $treeParentCode)
-        <el-form-item label="${comment}" prop="${treeParentCode}">
-          <treeselect v-model="form.${treeParentCode}" :options="${businessName}Options" :normalizer="normalizer" placeholder="请选择${comment}" />
+#if("" != $treeParentId && $column.javaField == $treeParentId)
+        <el-form-item label="${comment}" prop="${treeParentId}">
+          <treeselect v-model="form.${treeParentId}" :options="${businessName}Options" :normalizer="normalizer" placeholder="请选择${comment}" />
         </el-form-item>
 #elseif($column.htmlType == "input")
         <el-form-item label="${comment}" prop="${field}">
@@ -199,12 +225,12 @@
 </template>
 
 <script>
-import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, edit${BusinessName}, export${BusinessName} } from "@/api/${moduleName}/${businessName}";
+import { list${ClassName}, get${ClassName}, del${ClassName}, add${ClassName}, edit${ClassName}, export${ClassName} } from "@/api/${moduleName}/${businessName}";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-  name: "${BusinessName}",
+  name: "${ClassName}",
   components: { Treeselect },
   data() {
     return {
@@ -218,6 +244,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 日期范围
+      dateRange: [],
 #foreach ($column in $columns)
 #set($parentheseIndex=$column.columnComment.indexOf("（"))
 #if($parentheseIndex != -1)
@@ -278,8 +306,8 @@ export default {
     /** 查询${functionName}列表 */
     getList() {
       this.loading = true;
-      list${BusinessName}(this.queryParams).then(response => {
-        this.${businessName}List = this.handleTree(response.data, "${treeCode}", "${treeParentCode}");
+      list${ClassName}(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        this.${businessName}List = this.handleTree(response.data, "${treeId}", "${treeParentId}");
         this.loading = false;
       });
     },
@@ -289,17 +317,17 @@ export default {
         delete node.children;
       }
       return {
-        id: node.${treeCode},
+        id: node.${treeId},
         label: node.${treeName},
         children: node.children
       };
     },
 	/** 查询部门下拉树结构 */
     getTreeselect() {
-      list${BusinessName}().then(response => {
+      list${ClassName}().then(response => {
         this.${businessName}Options = [];
-        const data = { ${treeCode}: 0, ${treeName}: '顶级节点', children: [] };
-        data.children = this.handleTree(response.data, "${treeCode}", "${treeParentCode}");
+        const data = { ${treeId}: 0, ${treeName}: '顶级节点', children: [] };
+        data.children = this.handleTree(response.data, "${treeId}", "${treeParentId}");
         this.${businessName}Options.push(data);
       });
     },
@@ -357,9 +385,9 @@ export default {
       this.reset();
 	  this.getTreeselect();
       if (row != undefined) {
-        this.form.${treeParentCode} = row.${treeCode};
+        this.form.${treeParentId} = row.${treeId};
       }
-      get${BusinessName}(row.${pkColumn.javaField}).then(response => {
+      get${ClassName}(row.${pkColumn.javaField}).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改${functionName}";
@@ -370,7 +398,7 @@ export default {
       this.#[[$]]#refs["form"].validate(valid => {
         if (valid) {
           if (this.form.${pkColumn.javaField} != undefined) {
-            edit${BusinessName}(this.form).then(response => {
+            edit${ClassName}(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("修改成功");
                 this.open = false;
@@ -380,7 +408,7 @@ export default {
               }
             });
           } else {
-            add${BusinessName}(this.form).then(response => {
+            add${ClassName}(this.form).then(response => {
               if (response.code === 0) {
                 this.msgSuccess("新增成功");
                 this.open = false;
@@ -400,7 +428,7 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return del${BusinessName}(row.${pkColumn.javaField});
+          return del${ClassName}(row.${pkColumn.javaField});
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
